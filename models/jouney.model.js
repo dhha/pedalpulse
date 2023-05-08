@@ -6,9 +6,6 @@ const LocationSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    city: String,
-    state: String,
-    country: String,
     lat: Number,
     lng: Number
 });
@@ -18,21 +15,11 @@ const journeySchema = mongoose.Schema({
         type: String,
         required: true
     },
-    date: String,
-    start_time: String,
-    end_time: String,
-    duration: {
-        type: Number,
-        default: 0
-    },
-    from: LocationSchema,
-    to: LocationSchema,
+    date: Date,
     distance: {
         type: Number,
         default: 0
     },
-    user: String,
-    calories: Number,
     check_points: [LocationSchema]
 });
 
