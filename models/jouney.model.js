@@ -6,8 +6,10 @@ const LocationSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    lat: Number,
-    lng: Number
+    coordinates: {
+        type: [Number],
+        index: "2dsphere"
+    }
 });
 
 const journeySchema = mongoose.Schema({
@@ -20,6 +22,8 @@ const journeySchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    from_location: LocationSchema,
+    end_location: LocationSchema,
     check_points: [LocationSchema]
 });
 

@@ -9,7 +9,8 @@ router.route("/journeys")
 
 router.route("/journeys/:id")
     .get(journeyController.getOne)
-    .put(journeyController.update)
+    .put(journeyController.fullUpdate)
+    .patch(journeyController.partialUpdate)
     .delete(journeyController.delete);
 
 router.route("/journeys/:journeyId/locations")
