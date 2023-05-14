@@ -1,0 +1,8 @@
+<ul>
+    <li *ngFor="let game of games">
+        <a routerLink="/game/{{game._id}}">{{game.title}}</a>
+    </li>
+</ul>
+
+<div *ngIf="games.length > 0; else emptyBlock ">We have {{games.length}} games</div>
+<ng-template #emptyBlock>There is no games.</ng-template>

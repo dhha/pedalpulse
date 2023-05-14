@@ -1,0 +1,5 @@
+<div *ngIf="game; else emptyBlock">
+    <h1>{{game.title}}</h1>
+</div>
+<ng-template #emptyBlock>Game not found!</ng-template>
+
