@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const journeyModel = mongoose.model("Journey");
+const theaterModel = mongoose.model("Theater");
 
 const locationController = {
     getAll: function(req, res) {
@@ -112,6 +113,18 @@ const locationController = {
                     }
                 });
             }
+        })
+    },
+
+    getAllState: function(req, res) {
+        /*theaterModel.find({"location.address.state": "CA"}).select("location").exec().then(data => {
+            res.status(200).json(data);
+        })*/
+        theaterModel.aggregate([
+            //{$match: {}},
+            {$group: {_id: "$location.address.state"}}
+        ]).exec().then(data => {
+            res.status(200).json(data);
         })
     }
 }
