@@ -53,7 +53,7 @@ export class JourneyFormComponent {
             start_lat: startLocation? startLocation[1] : "",
             end_point: (checkPoints &&  checkPoints[1])? checkPoints[1].name : "",
             end_lng: endLocation? endLocation[0] : "",
-            end_lat: startLocation? startLocation[1] : ""
+            end_lat: endLocation? endLocation[1] : ""
           });
         }
       })

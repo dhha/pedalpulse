@@ -78,8 +78,8 @@ const journeyController = {
     fullUpdate: function(req, res) {
         const fullUpdate = function(req, res, journey) {
             journey.title = req.body.title;
-            journey.distance = req.body.distance;
-            journey.date = req.body.date;
+            journey.check_points = req.body.check_points;
+            journey.start_date = req.body.start_date;
 
             journey.save().then(updatedJourney => {
                 res.status(parseInt(process.env.STATUS_SUCCESS)).json(updatedJourney);
