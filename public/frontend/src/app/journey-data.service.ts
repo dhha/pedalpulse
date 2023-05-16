@@ -10,8 +10,8 @@ export class JourneyDataService {
   baseApiUrl: string = "http://localhost:3000/api/journeys"
   constructor(private _http: HttpClient) {}
 
-  getAll(): Observable<JourneyModel[]> {
-    return this._http.get<JourneyModel[]>(this.baseApiUrl);
+  getAll(offset: number, limit: number): Observable<JourneyModel[]> {
+    return this._http.get<JourneyModel[]>(this.baseApiUrl + "?offset=" + offset + '&limit=' + limit);
   }
 
   addOne(journey: any): Observable<JourneyModel> {

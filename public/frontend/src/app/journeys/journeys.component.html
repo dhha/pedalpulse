@@ -34,8 +34,8 @@
                     </select>
                 </div>
                 <div class="pull-right">
-                    <button class="btn btn-color uppercase os-font" disabled>Previous</button>
-                    <button class="btn btn-color uppercase os-font ml-2" disabled>Next</button>
+                    <button class="btn btn-color uppercase os-font" [disabled]="offset <= 0" (click)="previousPage()">Previous</button>
+                    <button class="btn btn-color uppercase os-font ml-2" [disabled]="resultCount < limit" (click)="nextPage()">Next</button>
                 </div>
                 
             </div>

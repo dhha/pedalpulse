@@ -11,6 +11,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class JourneysComponent {
   journeys!: JourneyModel[];
+  offset: number = 0;
+  limit: number = 10;
+  resultCount: number = 0;
 
   constructor(private _journeyService: JourneyDataService, private _router: Router) {}
 
@@ -48,9 +51,22 @@ export class JourneysComponent {
   }
 
   private loadData() {
-    this._journeyService.getAll().subscribe({
-      next: data => this.journeys = data,
+    this._journeyService.getAll(this.offset, this.limit).subscribe({
+      next: data => {
+        this.journeys = data;
+        this.resultCount = data.length;
+      },
       error: err => console.log("Api error", err)
     })
+  }
+
+  previousPage() {
+    this.offset -= this.limit;
+    this.loadData();
+  }
+
+  nextPage() {
+    this.offset += this.limit;
+    this.loadData();
   }
 }
