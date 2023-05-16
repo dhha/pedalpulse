@@ -1,0 +1,186 @@
+body {
+    font-family: 'Lora', serif;
+	color: #6c7772;
+}
+.dark-color {
+    color: #374e41 !important;
+}
+.color-2 {
+	color: #445f50 !important;
+}
+.color-3 {
+	color: #324c5d !important;
+}
+.color-4 {
+	color: #46b19d !important;
+}
+.color-5 {
+	color: #df494a !important;
+}
+.os-font {
+	font-family: 'Dosis', sans-serif !important;
+}
+.header.header-transparent.scrolling-menu .header-main {
+	background-color: rgba(68, 95, 80 ,0.95);
+}
+.icon-title {
+    display: block;
+	font-size: 54px;
+}
+.go-to-top {
+	background-color: #d84f0c;
+}
+.simple_line {
+	width: 52px;
+	border-bottom: 4px solid #b1bcb7;
+}
+.simple_line.thick {
+	width: 70px;
+	border-bottom: 6px solid #b1bcb7;
+}
+.simple_line.color {
+	border-bottom-color: #d84f0c;
+}
+.simple_line.center {
+	margin-left: auto;
+	margin-right: auto;
+}
+.bg-gray {
+	background-color: #eff1f0 !important;
+}
+.box-info h2 {
+	margin-bottom: 5px;
+}
+.btn-color-2 {
+	background-color: #445f50;
+    border-color: #445f50;
+	color: #fff;
+}
+.btn-color-2:hover {
+	background-color: #d84f0c;
+    border-color: #d84f0c;
+	color: #fff;
+}
+.team .team-member .member-overlay {
+	background-color: #445f50;
+}
+.separator-text h4 {
+	line-height: 24px;
+}
+.service-item i {
+	font-size: 63px;
+}
+.portfolio-grid .grid-content-wrapper .grid-content h3 {
+    font-size: 24px;
+}
+.accordion-group:first-child .accordion-heading,
+.accordion-heading {
+	border-color: #E7EEF0;
+	background-color: rgba(231, 238, 240 ,0.4);
+}
+.accordion-heading i.toggle-icon {
+	left: 12px;
+	right: inherit;
+}
+.accordion-heading a {
+	padding-left: 54px;
+    padding-right: 18px;
+	font-size: 18px;
+}
+.accordion-body {
+	border-color: #E7EEF0;
+	background-color: #fff;
+}
+.footer-top,
+.footer-bottom {
+	background: none;
+}
+.company-info .phone {
+	font-family: 'Dosis', sans-serif;
+}
+.footer-top .highlighted {
+	border-color: #E7EEF0;
+	background-color: rgba(255, 255, 255, 0.0784314);
+}
+input[type=text], textarea {
+	font-size: 13px;
+}
+.mfp-container {
+	color: #6c7772;
+}
+.popup-close .grid {
+    color: #6c7772;
+    background: #6c7772;
+}
+.section-fullscreen .single-portfolio-info .single-portfolio-title {
+    font-family: 'Dosis', sans-serif;
+}
+.seperate-line {
+    border-bottom-color: #dedede;
+}
+.tabs .nav-tabs > li > a {
+	color: #6c7772;
+	font-family: 'Dosis', sans-serif;
+	font-weight: 600;
+}
+.tabs .nav > li > a:focus, 
+.tabs .nav > li > a:hover {
+    background: #fff;
+}
+.tabs .nav-tabs>li.active > a, 
+.tabs .nav-tabs > li.active > a:focus, 
+.tabs .nav-tabs > li.active > a:hover {
+	color: #d84f0c;
+}
+.tab-content {
+    padding: 34px 40px 24px;
+}
+.portfolio-grid .grid-overlay {
+    background-color: rgba(76, 102, 88 ,0.35);
+}
+.section-signup .icon-title {
+	font-size: 140px;
+}
+.section-signup .icon-title + h1 {
+	font-size: 53px;
+}
+.section-signup .icon-title + h1 + h2 {
+	font-size: 40px;
+}
+.side-menu {
+	display: none;
+}
+@media (max-width: 768px) {
+	.side-menu {
+		display: block;
+	}
+	.header.header-transparent .header-main {
+		background-color: rgba(68, 95, 80 ,0.95);
+	}
+	.header #logo #logo-before {
+		display: none;
+	}
+	.header #logo #logo-after {
+		filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    	opacity: 1;
+	}
+	.accordion {
+		float: left;
+		width: 100%;
+	}
+	.mfp-wrap {
+		top: 0 !important;
+	}
+	.mfp-fade.mfp-bg.mfp-ready {
+		height: auto !important;
+	}
+}
+@media (max-width: 480px) {
+	.box-banner {
+		height: auto !important;
+		min-height: 300px;
+	}
+	.section-title {
+		font-size: 28px;
+	}
+}

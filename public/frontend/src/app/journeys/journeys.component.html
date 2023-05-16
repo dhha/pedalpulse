@@ -1,0 +1,44 @@
+<div id="faqs" class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div data-wow-delay="0.3s" class="text-center mb-6 wow fadeInUp" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInUp;">
+                    <i class="mdi-map icon-title"></i>
+                    <h2 class="fw-bold os-font color-2 fz-53 double_lined mb-1">Your Journeys</h2>
+                    <p class="dark-color fz-19 mb-2">
+                        <em>Don't Worry, Be Happy</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-sm-12">
+                <div class="accordion mb-3" *ngFor="let journey of journeys">
+                    <div class="accordion-group toggle toggle_default toggle_color_default toggle_size_md">
+                        <div class="accordion-heading toggle_title">
+                            <a routerLink="/journey/{{journey._id}}" class="accordion-toggle dark-color pull-left" data-toggle="collapse" aria-expanded="true" aria-controls="collapse1">
+                                {{journey.title}}
+                            </a>
+                            <small class="pr-2 pt-1 pull-right delete" (click)="delete(journey._id)"><i class="mdi-close icon-title"></i></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-sm-12 mt-4">
+                <div>
+                    Item of page: 
+                    <select>
+                        <option>5</option>
+                        <option>10</option>
+                    </select>
+                </div>
+                <div class="pull-right">
+                    <button class="btn btn-color uppercase os-font" disabled>Previous</button>
+                    <button class="btn btn-color uppercase os-font ml-2" disabled>Next</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>

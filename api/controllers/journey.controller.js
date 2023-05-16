@@ -3,12 +3,9 @@ const journeyModel = mongoose.model("Journey");
 
 const _updateOne = function(req, res, updateCallback) {
     const id = req.params.id;
-    journeyModel.findById(id).exec(function(err, journey) {
-        const response = {status: process.env.STATUS_NO_CONTENT, message: journey};
-        if(err) {
-            response.status = process.env.STATUS_SERVER_ERROR;
-            response.message = err
-        } else if(!journey) {
+    journeyModel.findById(id).exec().then(journey =>  {
+        const response = {status: parseInt(process.env.STATUS_NO_CONTENT), message: journey};
+        if(!journey) {
             response.status = process.env.STATUS_NOT_FOUND;
             response.message = process.env.MES_NOT_FOUND;
         }
@@ -18,6 +15,8 @@ const _updateOne = function(req, res, updateCallback) {
         } else {
             updateCallback(req, res, journey);
         }
+    }).catch(err => {
+        res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
     })
 }
 
@@ -47,7 +46,7 @@ const journeyController = {
         }
         
         if(true) {
-            queryString = {"from_location.coordinates": {
+            queryString = {"check_points.location": {
                 $near: {$geometry: {
                     type: "Point",
                     coordinates: [lat, lng]
@@ -55,31 +54,25 @@ const journeyController = {
             }}
         }
 
-        journeyModel.find({}).skip(offset).limit(limit).exec(function(err, data) {
-            if(err) {
-                res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
-            }
-            res.status(process.env.STATUS_SUCCESS).json(data);
-        })
+        journeyModel.find({}).skip(offset).limit(limit).exec().then(data => {
+            res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
+        }).catch(err => {
+            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json({message: err});
+        });
     },
     getOne: function(req, res) {
         const id = req.params.id;
-        journeyModel.findById(id).exec(function(err, data) {
-            if(err) {
-                res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
-            } else if(!data) {
-                res.status(process.env.STATUS_NOT_FOUND).json({message: process.env.NOT_FOUND_MSG})
-            } else {
-                res.status(process.env.STATUS_SUCCESS).json(data);
-            }
+        journeyModel.findById(id).exec().then((data) => {
+            res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
+        }).catch(err => {
+            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json({message: err});
         });
     },
     addNew: function(req, res) {
-        journeyModel.create(req.body, function(err, data) {
-            if(err) {
-                res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
-            }
-            res.status(process.env.STATUS_SUCCESS).json(data);
+        journeyModel.create(req.body).then(data => {
+            res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
+        }).catch(err => {
+            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json({message: err});
         })
     },
     fullUpdate: function(req, res) {
@@ -88,11 +81,10 @@ const journeyController = {
             journey.distance = req.body.distance;
             journey.date = req.body.date;
 
-            journey.save(function(err, updatedJourney) {
-                if(err) {
-                    res.status(process.env.STATUS_SERVER_ERROR).json(err);
-                }
-                res.status(process.env.STATUS_SUCCESS).json(updatedJourney);
+            journey.save().then(updatedJourney => {
+                res.status(parseInt(process.env.STATUS_SUCCESS)).json(updatedJourney);
+            }).catch(err => {
+                res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
             })
         }
 
@@ -116,11 +108,10 @@ const journeyController = {
     },
     delete: function(req, res) {
         const id = req.params.id;
-        journeyModel.findByIdAndDelete(id).exec(function(err, data) {
-            if(err) {
-                res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
-            }
-            res.status(process.env.STATUS_SUCCESS).json(data);
+        journeyModel.findByIdAndDelete(id).exec().then(data => {
+            res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
+        }).catch(err => {
+            ires.status(parseInt(process.env.STATUS_SERVER_ERROR)).json({message: err});
         })
     }
 

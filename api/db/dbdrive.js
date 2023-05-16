@@ -6,7 +6,6 @@ mongoose.connection.on("connected", function(){
 });
 require("../models/jouney.model"); 
 require("../models/location.model"); 
-require("../models/theater.model")
 
 mongoose.connection.on("disconected", function() {
     console.log("Mongoose disconnected");

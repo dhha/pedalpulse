@@ -6,7 +6,7 @@ const locationController = require("../controllers/location.controller");
 router.route("/")
     .get(journeyController.getAll)
     .post(journeyController.addNew);
-router.route('/theaters').get(locationController.getAllState);
+
 router.route("/:id")
     .get(journeyController.getOne)
     .put(journeyController.fullUpdate)

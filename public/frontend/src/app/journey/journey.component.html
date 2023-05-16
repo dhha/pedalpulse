@@ -1,0 +1,69 @@
+<div class="pt-0 pb-2" *ngIf="journey">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div data-wow-delay="0.3s" class="text-center mb-6 wow fadeInUp" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInUp;">
+                    <i class="mdi-ticket icon-title"></i>
+                    <h2 class="fw-bold os-font color-2 fz-53 double_lined mb-1">{{journey.title}}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div data-wow-delay="0.3s" class="wow fadeInLeft" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section pt-5 pb-7" *ngIf="journey">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div data-wow-delay="0.3s" class="service-item mb-5 text-center wow fadeIn" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeIn;">
+                    <div class="service-icon">
+                        <i class="mdi-forum color"></i>
+                    </div>
+                    <div class="service-content text-center">
+                        <h4 class="os-font color-2">Start Date</h4> 
+                        <p>
+                            {{journey.start_date | date:"MMM dd, YYYY":"+000"}}
+                        </p> 
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-sm-4">
+                <div data-wow-delay="0.4s" class="service-item mb-5 text-center wow fadeIn" style="visibility: visible; animation-delay: 0.4s; animation-name: fadeIn;">
+                    <div class="service-icon">
+                        <i class="mdi-tooltip-text color"></i>
+                    </div>
+                    <div class="service-content text-center">
+                        <h4 class="os-font color-2">Start Point</h4> 
+                        <p>
+                            {{journey.check_points[0] ? journey.check_points[0].name : ""}}
+                        </p> 
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div data-wow-delay="0.5s" class="service-item mb-5 text-center wow fadeIn" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeIn;">
+                    <div class="service-icon">
+                        <i class="mdi-spotlight color"></i>
+                    </div>
+                    <div class="service-content text-center">
+                        <h4 class="os-font color-2">End Point</h4> 
+                        <p>
+                            {{journey.check_points[1]?journey.check_points[1].name: ""}}
+                        </p> 
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12 mt-4">
+            <button class="btn btn-color uppercase os-font" routerLink="/journey/{{journey._id}}/edit">Edit</button>
+        </div>
+    </div>
+</div>
