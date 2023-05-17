@@ -27,6 +27,9 @@ body {
     display: block;
 	font-size: 54px;
 }
+.icon-title.remove{
+	font-size: 30px;
+}
 .go-to-top {
 	background-color: #d84f0c;
 }
