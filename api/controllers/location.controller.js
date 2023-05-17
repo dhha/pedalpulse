@@ -35,18 +35,18 @@ const locationController = {
             const response = {};
             journeyModel.findById(journeyId).select("check_points").exec().then(data => {
                 if(!data) {
-                    helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MSG_JOURNEY_NOT_FOUND})
+                    helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MSG_JOURNEY_NOT_FOUND});
                 } else {
                     const location = data.check_points.find(item => item._id == locationId);
 
                     if(location) {
-                        helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, location)
+                        helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, location);
                     } else {
-                        helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, {message: process.env.MSG_LOCATION_NOT_FOUND})
+                        helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, {message: process.env.MSG_LOCATION_NOT_FOUND});
                     }
                 }
             }).catch(err => {
-                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err)
+                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
             }).finally(() => {
                 helpers.sendResponse(res, response);
             });
@@ -61,24 +61,27 @@ const locationController = {
         const journeyId = req.params.journeyId;
 
         if(journeyId && journeyId != "") {
-            journeyModel.findById(journeyId).exec(function(err, journey) {
-                if(err) {
-                    res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
-                } else if(!journey) {
-                    res.status(process.env.STATUS_NOT_FOUND).json({message: process.env.MSG_JOURNEY_NOT_FOUND})
+            const response = {};
+            journeyModel.findById(journeyId).exec().then(journey => {
+                if(!journey) {
+                    helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MSG_JOURNEY_NOT_FOUND});
                 }
                 if(journey) {
                     journey.check_points.push(req.body);
                     journey.save(function(err, updatedJourney) {
                         if(err) {
-                            res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
+                            helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
                         } else if(!updatedJourney) {
-                            res.status(process.env.STATUS_NOT_FOUND).json({message: process.env.MSG_JOURNEY_NOT_FOUND})
+                            helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MSG_JOURNEY_NOT_FOUND});
                         } else {
-                            res.status(process.env.STATUS_SUCCESS).json(updatedJourney.check_points);
+                            helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney.check_points);
                         }
                     });  
                 }
+            }).catch(err => {
+                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+            }).finally(() => {
+                helpers.sendResponse(res, response);
             });
         } else {
             helpers.sendResponse(res, {
@@ -90,58 +93,79 @@ const locationController = {
     update: function(req, res) {
         const journeyId = req.params.journeyId;
         const locationId = req.params.id;
-        journeyModel.findById(journeyId).exec().then(journey => {
-            if(!journey) {
-                res.status(process.env.STATUS_NOT_FOUND).json({message: process.env.MSG_JOURNEY_NOT_FOUND})
-            }
-            if(journey) {
-                const location = journey.check_points.find(item => item._id == locationId);
-                if(location) {
-                    location.address = req.body.address;
-                    location.lat = req.body.lat;
-                    location.lng = req.body.lng;
-                }
 
-                journey.save(function(err, updatedJourney) {
-                    if(err) {
-                        res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
-                    } else if(!updatedJourney) {
-                        res.status(process.env.STATUS_NOT_FOUND).json({message: process.env.MSG_JOURNEY_NOT_FOUND})
-                    } else {
-                        res.status(process.env.STATUS_SUCCESS).json(updatedJourney.check_points);
+        if(journeyId && journeyId != "" && locationId && locationId != "") {
+            const response = {};
+            journeyModel.findById(journeyId).exec().then(journey => {
+                if(!journey) {
+                    helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MSG_JOURNEY_NOT_FOUND});
+                }
+                if(journey) {
+                    const location = journey.check_points.find(item => item._id == locationId);
+                    if(location) {
+                        location.address = req.body.address;
+                        location.lat = req.body.lat;
+                        location.lng = req.body.lng;
                     }
-                });
-            }
-        }).catch(err => {
-            res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
-        });
+
+                    journey.save(function(err, updatedJourney) {
+                        if(err) {
+                            helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+                        } else if(!updatedJourney) {
+                            helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MSG_JOURNEY_NOT_FOUND});
+                        } else {
+                            helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney.check_points);
+                        }
+                    });
+                }
+            }).catch(err => {
+                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+            }).finally(() => {
+                helpers.sendResponse(res, response);
+            });
+        } else {
+            helpers.sendResponse(res, {
+                status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
+                message: process.env.MSG_ID_NOT_NULL
+            });
+        }
     },
     delete: function(req, res) {
         const journeyId = req.params.journeyId;
         const locationId = req.params.id;
 
-        journeyModel.findById(journeyId).exec().then(journey => {
-            if(!journey) {
-                res.status(process.env.STATUS_NOT_FOUND).json({message: process.env.MSG_JOURNEY_NOT_FOUND})
-            }
-            if(journey) {
-                const location = journey.check_points.find(item => item._id == locationId);
-                const index = journey.check_points.indexOf(location);
-                journey.check_points.splice(index, 1);
+        if(journeyId && journeyId != "" && locationId && locationId != "") {
+            const response = {};
+            journeyModel.findById(journeyId).exec().then(journey => {
+                if(!journey) {
+                    helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MSG_JOURNEY_NOT_FOUND});
+                }
+                if(journey) {
+                    const location = journey.check_points.find(item => item._id == locationId);
+                    const index = journey.check_points.indexOf(location);
+                    journey.check_points.splice(index, 1);
 
-                journey.save(function(err, updatedJourney) {
-                    if(err) {
-                        res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
-                    } else if(!updatedJourney) {
-                        res.status(process.env.STATUS_NOT_FOUND).json({message: process.env.MSG_JOURNEY_NOT_FOUND})
-                    } else {
-                        res.status(process.env.STATUS_SUCCESS).json(updatedJourney);
-                    }
-                });
-            }
-        }).catch(err => {
-            res.status(process.env.STATUS_SERVER_ERROR).json({message: err});
-        })
+                    journey.save(function(err, updatedJourney) {
+                        if(err) {
+                            helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+                        } else if(!updatedJourney) {
+                            helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MSG_JOURNEY_NOT_FOUND});
+                        } else {
+                            helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney.check_points);
+                        }
+                    });
+                }
+            }).catch(err => {
+                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+            }).finally(() => {
+                helpers.sendResponse(res, response);
+            });
+        } else {
+            helpers.sendResponse(res, {
+                status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
+                message: process.env.MSG_ID_NOT_NULL
+            });
+        }
     }
 }
 

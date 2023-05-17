@@ -60,9 +60,6 @@ export class RegisterComponent {
       password: this.registerForm.value["password"],
       email: this.registerForm.value["email"]
     }
-      newUser.username = this.registerForm.value["username"];
-      newUser.password = this.registerForm.value["password"];
-      newUser.email = this.registerForm.value["email"];
   
       this._userService.addOne(newUser).subscribe({
         next: user => {
