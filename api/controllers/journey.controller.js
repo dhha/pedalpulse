@@ -7,21 +7,14 @@ const _updateOne = function(req, res, updateCallback) {
     if(journeyId && journeyId !="") {
         const response = {};
         journeyModel.findById(journeyId).exec().then(journey =>  {
-            helpers.setInternalResponse(response, process.env.STATUS_NO_CONTENT, "");
-
             if(!journey) {
                 helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MES_NOT_FOUND});
-            }
-            if(parseInt(process.env.STATUS_NO_CONTENT, 10) !== response.status) {
-                helpers.sendResponse(res, response);
             } else {
                 updateCallback(req, res, journey);
             }
         }).catch(err => {
             helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
-        }).finally(() => {
-            helpers.sendResponse(res, response);
-        })
+        });
     }
     else {
         helpers.sendResponse(res, {
@@ -68,13 +61,21 @@ const journeyController = {
         if(req.query && req.query.lng) {
             lng = req.query.lng
         }
-        
+        let maxDistance = parseInt(process.env.MAX_DISTANCE, 10);
+        let minDistance = parseInt(process.env.MIN_DISTANCE, 10);
+        if(req.query && req.query.max_distance) {
+            maxDistance = req.query.max_distance
+        }
+        if(req.query && req.query.min_distance) {
+            minDistance = req.query.min_distance
+        }
+
         if(lat && lng) {
             queryString = {"check_points.location": {
                 $near: {$geometry: {
                     type: "Point",
                     coordinates: [lng, lat]
-                }, $maxDistance: 100, $minDistance: 0}
+                }, $maxDistance: maxDistance, $minDistance: minDistance}
             }}
         }
 
