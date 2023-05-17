@@ -67,6 +67,14 @@ const journeyController = {
         if(req.query && req.query.lng) {
             lng = req.query.lng
         }
+        if(isNaN(lng) || isNaN(lat)) {
+            helpers.sendResponse(res, {
+                status: parseInt(process.env.STATUS_REQUEST_UNPROCESSABLE, 10),
+                message: {message: process.env.MSG_LNG_LAT_SHOULD_NUMBER}
+            });
+            return;
+        }
+        
         let maxDistance = parseInt(process.env.MAX_DISTANCE, 10);
         let minDistance = parseInt(process.env.MIN_DISTANCE, 10);
         if(req.query && req.query.max_distance) {
@@ -74,6 +82,13 @@ const journeyController = {
         }
         if(req.query && req.query.min_distance) {
             minDistance = req.query.min_distance
+        }
+        if(isNaN(maxDistance) || isNaN(minDistance)) {
+            helpers.sendResponse(res, {
+                status: parseInt(process.env.STATUS_REQUEST_UNPROCESSABLE, 10),
+                message: {message: process.env.MSG_DISTANCE_SHOULD_NUMBER}
+            });
+            return;
         }
 
         if(lat && lng) {
