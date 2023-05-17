@@ -5,15 +5,21 @@ const journeyModel = mongoose.model("Journey");
 const _updateOne = function(req, res, updateCallback) {
     const journeyId = req.params.id;
     if(journeyId && journeyId !="") {
-        const response = {};
+
         journeyModel.findById(journeyId).exec().then(journey =>  {
             if(!journey) {
-                helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MES_NOT_FOUND});
+                helpers.sendResponse(res, {
+                    status: parseInt(process.env.STATUS_NOT_FOUND, 10),
+                    message: {message: process.env.MES_NOT_FOUND}
+                });
             } else {
                 updateCallback(req, res, journey);
             }
         }).catch(err => {
-            helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+            helpers.sendResponse(res, {
+                status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
+                message: err
+            });
         });
     }
     else {
