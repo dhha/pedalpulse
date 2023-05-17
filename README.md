@@ -1,6 +1,6 @@
 ## Introduction
 
-pedalPulse is about the journey of bicycle riding. It allow user to store the tracklog of every bicycle activities.
+PedalPulse is the project for the journey of bicycle riding. It allow user to store the tracklog of every bicycle activities.
 using nodejs, angularjs, mongodb
 
 ## Installation

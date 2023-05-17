@@ -1,43 +1,62 @@
 const mongoose = require("mongoose");
+const helpers = require("../helpers");
 const journeyModel = mongoose.model("Journey");
 
 const _updateOne = function(req, res, updateCallback) {
     const journeyId = req.params.id;
     if(journeyId && journeyId !="") {
+        const response = {};
         journeyModel.findById(journeyId).exec().then(journey =>  {
-            const response = {status: parseInt(process.env.STATUS_NO_CONTENT), message: journey};
+            helpers.setInternalResponse(response, process.env.STATUS_NO_CONTENT, "");
+
             if(!journey) {
-                response.status = process.env.STATUS_NOT_FOUND;
-                response.message = process.env.MES_NOT_FOUND;
+                helpers.setInternalResponse(response, process.env.STATUS_NOT_FOUND, {message: process.env.MES_NOT_FOUND});
             }
-    
-            if(204 !== response.status) {
-                res.status(response.status).json(response.message);
+            if(parseInt(process.env.STATUS_NO_CONTENT, 10) !== response.status) {
+                helpers.sendResponse(res, response);
             } else {
                 updateCallback(req, res, journey);
             }
         }).catch(err => {
-            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
+            helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+        }).finally(() => {
+            helpers.sendResponse(res, response);
         })
     }
     else {
-        res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json("Please send journey id");
+        helpers.sendResponse(res, {
+            status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
+            message: {message: process.env.MSG_ID_NOT_NULL}
+        });
     }
 }
 
 const journeyController = {
     getAll: function(req, res) {
-        let offset = 0;
-        let limit = 5;
+        let offset = parseInt(process.env.DEFAULT_OFFSET, 10);
+        let limit = parseInt(process.env.DEFAULT_LIMIT, 10);
 
         if(req.query && req.query.offset) {
             offset = req.query.offset;
         }
         if(req.query && req.query.limit) {
             limit = req.query.limit;
-            if(limit > 50) {
-                limit = 10;
+            const maxLimit = parseInt(process.env.MAX_LIMIT, 10);
+            if(limit > maxLimit) {
+                helpers.sendResponse(res, {
+                    status: parseInt(process.env.STATUS_REQUEST_UNPROCESSABLE, 10),
+                    message: {message: process.env.MSG_YOUR_LIMIT_OVER + maxLimit}
+                });
+                return;
             }
+        }
+
+        if(isNaN(offset) || isNaN(limit)) {
+            helpers.sendResponse(res, {
+                status: parseInt(process.env.STATUS_REQUEST_UNPROCESSABLE, 10),
+                message: {message: process.env.MSG_LIMIT_OFFSET_SHOULD_NUMBER}
+            });
+            return;
         }
 
         let queryString = {};
@@ -63,31 +82,43 @@ const journeyController = {
             queryString.title = {$regex: req.query.term, $options: 'i'};
         }
 
+        const response = {};
         journeyModel.find(queryString).skip(offset).limit(limit).exec().then(data => {
-            res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
+            helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data);
         }).catch(err => {
-            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
+            helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+        }).finally(() => {
+            helpers.sendResponse(res, response);
         });
     },
     getOne: function(req, res) {
         const journeyId = req.params.id;
         if(journeyId && journeyId != "") {
+            const response = {};
             journeyModel.findById(journeyId).exec().then((data) => {
-                res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
+                helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data);
             }).catch(err => {
-                res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
-            });
+                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+            }).finally(() => {
+                helpers.sendResponse(res, response);
+            })
         } else {
-            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json("Please send journey id");
+            helpers.sendResponse(res, {
+                status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
+                message: {message: process.env.MSG_ID_NOT_NULL}
+            });
         }
         
     },
     addNew: function(req, res) {
+        const response = {};
         journeyModel.create(req.body).then(data => {
-            res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
+            helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data);
         }).catch(err => {
-            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
-        })
+            helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+        }).finally(() => {
+            helpers.sendResponse(res, response);
+        });
     },
     fullUpdate: function(req, res) {
         const fullUpdate = function(req, res, journey) {
@@ -95,11 +126,14 @@ const journeyController = {
             journey.check_points = req.body.check_points;
             journey.start_date = req.body.start_date;
 
+            const response = {};
             journey.save().then(updatedJourney => {
-                res.status(parseInt(process.env.STATUS_SUCCESS)).json(updatedJourney);
+                helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney);
             }).catch(err => {
-                res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
-            })
+                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+            }).finally(() => {
+                helpers.sendResponse(res, response);
+            });
         }
 
         _updateOne(req, res, fullUpdate);
@@ -110,22 +144,36 @@ const journeyController = {
             if(req.body.distance) journey.distance = req.body.distance;
             if(req.body.date) journey.date = req.body.date;
 
+            const response = {};
             journey.save().then(updatedJourney => {
-                res.status(parseInt(process.env.STATUS_SUCCESS)).json(updatedJourney);
+                helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney);
             }).catch(err => {
-                res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
-            })
+                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+            }).finally(() => {
+                helpers.sendResponse(res, response);
+            });
         }
 
         _updateOne(req, res, _partialUpdate);
     },
     delete: function(req, res) {
         const id = req.params.id;
-        journeyModel.findByIdAndDelete(id).exec().then(data => {
-            res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
-        }).catch(err => {
-            ires.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
-        })
+        if(id && id != '') {
+            const response = {};
+            journeyModel.findByIdAndDelete(id).exec().then(data => {
+                helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data);
+            }).catch(err => {
+                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
+            }).finally(() => {
+                helpers.sendResponse(res, response);
+            });
+        } else {
+            helpers.sendResponse(res, {
+                status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
+                message: {message: process.env.MSG_ID_NOT_NULL}
+            });
+        }
+        
     }
 
 }
