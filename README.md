@@ -9,14 +9,12 @@ using nodejs, angularjs, mongodb
 ```
 npm install
 npm start
-
 ```
 
-* Run frontend server
+* Run frontend
 ```
 cd ./public/frontend
 npm install
 npm start
-
 ```
 
