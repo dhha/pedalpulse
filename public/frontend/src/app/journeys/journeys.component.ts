@@ -13,7 +13,7 @@ import Helper from '../helper';
 export class JourneysComponent {
   journeys!: JourneyModel[];
   offset: number = 0;
-  limit: number = 10;
+  limit: number = 5;
   resultCount: number = 0;
   search: any = [];
 
