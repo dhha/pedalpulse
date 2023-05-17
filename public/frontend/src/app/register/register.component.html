@@ -1,1 +1,42 @@
-<p>register works!</p>
+<div class="pt-0 pb-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div data-wow-delay="0.3s" class="text-center mb-6 wow fadeInUp" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInUp;">
+                    <h2 class="fw-bold os-font color-2 fz-53 double_lined mb-1">Register new account</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="m-auto col-sm-6 col-sm-offset-3">
+                <div data-wow-delay="0.3s" class="wow fadeInLeft" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+                    <form class="contact-form" #registerForm="ngForm" (ngSubmit)="register()">
+                        <div class="row mb-2">
+                            <div class="col-sm-12">
+                                <input type="text" class="highlighted" name="username" placeholder="Username" required [(ngModel)]="user.username">
+                            </div>
+                            <div class="col-sm-12 mt-1">
+                                <input type="text" class="highlighted" name="email" placeholder="Email" required [(ngModel)]="user.email">
+                            </div>
+                            <div class="col-sm-12 mt-1">
+                                <input type="password" class="highlighted" name="password"  placeholder="Password" [(ngModel)]="user.password">
+                            </div>
+                            <div class="col-sm-12 mt-1">
+                                <input type="password" class="highlighted" name="confirm_password" placeholder="ConfirmPassword" [(ngModel)]="user.confirm_password">
+                            </div>
+                            
+                            <div class="col-sm-12 mt-4">
+                                <button type="submit" class="btn btn-color uppercase os-font">Register</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mt-5 seperate-line"></div>
+            </div>
+        </div>
+    </div>
+</div>

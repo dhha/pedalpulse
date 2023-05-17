@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import Swal from 'sweetalert2'
 import { JourneyModel } from '../journey-model';
 import { JourneyDataService } from '../journey-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import Helper from '../helper';
 
 @Component({
   selector: 'app-journeys',
@@ -14,6 +15,10 @@ export class JourneysComponent {
   offset: number = 0;
   limit: number = 10;
   resultCount: number = 0;
+  search: any = [];
+
+  @Input()
+  searchTermInput: string = "";
 
   constructor(private _journeyService: JourneyDataService, private _router: Router) {}
 
@@ -22,41 +27,41 @@ export class JourneysComponent {
   }
 
   delete(jouneyId: string) {
-    Swal.fire({
-      title: 'Are you sure!',
-      text: 'Do you want to delete this journey',
-      icon: "question",
-      confirmButtonText: 'Yes',
-      showCancelButton: true,
-    }).then((result) => {
-      if(result.value) {
-        this._journeyService.deleteOne(jouneyId).subscribe({
-          next: data => {
-            Swal.fire({
-              title: 'Great!',
-              text: 'The journey is deleted',
-              icon: "success",
-            });
-            this.loadData();
-          },
-          error: err => {
-            console.log('Api Error', err);
-          }
-        })
-      } else {
-        console.log('cancel');
-      }
-      
+    Helper.showConfirm("Are you sure!", "Do you want to delete this journey", () => {
+      this._journeyService.deleteOne(jouneyId).subscribe({
+        next: data => {
+          Helper.showSuccess('Great!', 'The journey is deleted');
+          this.loadData();
+        },
+        error: err => {
+          Helper.showError(err);
+        }
+      })
     });
+    
+    // Swal.fire({
+    //   title: 'Are you sure!',
+    //   text: 'Do you want to delete this journey',
+    //   icon: "question",
+    //   confirmButtonText: 'Yes',
+    //   showCancelButton: true,
+    // }).then((result) => {
+    //   if(result.value) {
+        
+    //   } else {
+    //     console.log('cancel');
+    //   }
+      
+    // });
   }
 
   private loadData() {
-    this._journeyService.getAll(this.offset, this.limit).subscribe({
+    this._journeyService.getAll(this.offset, this.limit, this.search).subscribe({
       next: data => {
         this.journeys = data;
         this.resultCount = data.length;
       },
-      error: err => console.log("Api error", err)
+      error: err => Helper.showError(err)
     })
   }
 
@@ -67,6 +72,17 @@ export class JourneysComponent {
 
   nextPage() {
     this.offset += this.limit;
+    this.loadData();
+  }
+
+  onChangeLimit(event: any) {
+    this.limit = parseInt(event.target.value);
+    this.offset = 0;
+    this.loadData();
+  }
+
+  searchByName() {
+    this.search.term = this.searchTermInput;
     this.loadData();
   }
 }

@@ -2,22 +2,27 @@ const mongoose = require("mongoose");
 const journeyModel = mongoose.model("Journey");
 
 const _updateOne = function(req, res, updateCallback) {
-    const id = req.params.id;
-    journeyModel.findById(id).exec().then(journey =>  {
-        const response = {status: parseInt(process.env.STATUS_NO_CONTENT), message: journey};
-        if(!journey) {
-            response.status = process.env.STATUS_NOT_FOUND;
-            response.message = process.env.MES_NOT_FOUND;
-        }
-
-        if(204 !== response.status) {
-            res.status(response.status).json(response.message);
-        } else {
-            updateCallback(req, res, journey);
-        }
-    }).catch(err => {
-        res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
-    })
+    const journeyId = req.params.id;
+    if(journeyId && journeyId !="") {
+        journeyModel.findById(journeyId).exec().then(journey =>  {
+            const response = {status: parseInt(process.env.STATUS_NO_CONTENT), message: journey};
+            if(!journey) {
+                response.status = process.env.STATUS_NOT_FOUND;
+                response.message = process.env.MES_NOT_FOUND;
+            }
+    
+            if(204 !== response.status) {
+                res.status(response.status).json(response.message);
+            } else {
+                updateCallback(req, res, journey);
+            }
+        }).catch(err => {
+            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
+        })
+    }
+    else {
+        res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json("Please send journey id");
+    }
 }
 
 const journeyController = {
@@ -45,34 +50,43 @@ const journeyController = {
             lng = req.query.lng
         }
         
-        if(true) {
+        if(lat && lng) {
             queryString = {"check_points.location": {
                 $near: {$geometry: {
                     type: "Point",
-                    coordinates: [lat, lng]
+                    coordinates: [lng, lat]
                 }, $maxDistance: 100, $minDistance: 0}
             }}
         }
 
-        journeyModel.find({}).skip(offset).limit(limit).exec().then(data => {
+        if(req.query && req.query.term) {
+            queryString.title = {$regex: req.query.term, $options: 'i'};
+        }
+
+        journeyModel.find(queryString).skip(offset).limit(limit).exec().then(data => {
             res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
         }).catch(err => {
-            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json({message: err});
+            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
         });
     },
     getOne: function(req, res) {
-        const id = req.params.id;
-        journeyModel.findById(id).exec().then((data) => {
-            res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
-        }).catch(err => {
-            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json({message: err});
-        });
+        const journeyId = req.params.id;
+        if(journeyId && journeyId != "") {
+            journeyModel.findById(journeyId).exec().then((data) => {
+                res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
+            }).catch(err => {
+                res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
+            });
+        } else {
+            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json("Please send journey id");
+        }
+        
     },
     addNew: function(req, res) {
         journeyModel.create(req.body).then(data => {
             res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
         }).catch(err => {
-            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json({message: err});
+            res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
         })
     },
     fullUpdate: function(req, res) {
@@ -96,11 +110,10 @@ const journeyController = {
             if(req.body.distance) journey.distance = req.body.distance;
             if(req.body.date) journey.date = req.body.date;
 
-            journey.save(function(err, updatedJourney) {
-                if(err) {
-                    res.status(process.env.STATUS_SERVER_ERROR).json(err);
-                }
-                res.status(process.env.STATUS_SUCCESS).json(updatedJourney);
+            journey.save().then(updatedJourney => {
+                res.status(parseInt(process.env.STATUS_SUCCESS)).json(updatedJourney);
+            }).catch(err => {
+                res.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
             })
         }
 
@@ -111,7 +124,7 @@ const journeyController = {
         journeyModel.findByIdAndDelete(id).exec().then(data => {
             res.status(parseInt(process.env.STATUS_SUCCESS)).json(data);
         }).catch(err => {
-            ires.status(parseInt(process.env.STATUS_SERVER_ERROR)).json({message: err});
+            ires.status(parseInt(process.env.STATUS_SERVER_ERROR)).json(err);
         })
     }
 

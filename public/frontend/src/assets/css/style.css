@@ -117,7 +117,7 @@ th {
 }
 
 .btn,
-input[type=text], input[type=date] {
+input[type=text], input[type=date] , input[type=password]{
     padding: 8px 20px;
     position: relative;
     border-width: 1px;
@@ -211,7 +211,7 @@ label {
     font-weight: 400
 }
 
-input[type=text], input[type=date] {
+input[type=text], input[type=date], input[type=password] {
     width: 100%;
     font-size: 12px;
     -moz-transition-property: color, background-color, border-color;

@@ -1,5 +1,36 @@
-<div class="inside-login">
-    <input name="username" placeholder="Username" />
-    <input name="pasw" placeholder="Password" />
-    <button>Login</button>
+<div class="pt-0 pb-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div data-wow-delay="0.3s" class="text-center mb-6 wow fadeInUp" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInUp;">
+                    <h2 class="fw-bold os-font color-2 fz-53 double_lined mb-1">Login</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="m-auto col-sm-6 col-sm-offset-3">
+                <div data-wow-delay="0.3s" class="wow fadeInLeft" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+                    <form class="contact-form" [formGroup]="loginForm" (ngSubmit)="submitForm()">
+                        <div class="row mb-2">
+                            <div class="col-sm-12">
+                                <input type="text" class="highlighted" name="author" id="author" placeholder="Username" formControlName="username" required>
+                            </div>
+                            <div class="col-sm-12 mt-1">
+                                <input type="password" class="highlighted" name="email" id="email" placeholder="Password" formControlName="password">
+                            </div>
+                            
+                            <div class="col-sm-12 mt-4">
+                                <button type="submit" class="btn btn-color uppercase os-font">Login</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mt-5 seperate-line"></div>
+            </div>
+        </div>
+    </div>
 </div>

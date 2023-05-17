@@ -4,6 +4,7 @@ import { JourneyDataService } from '../journey-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import Swal from 'sweetalert2';
+import Helper from '../helper';
 
 @Component({
   selector: 'app-journey-form',
@@ -98,24 +99,16 @@ export class JourneyFormComponent {
     if(this.currentJourney) {
       this._journeyService.updateOne(this.currentJourney._id, newJourney).subscribe({
         next: data => {
-          Swal.fire({
-            title: 'Great!',
-            text: 'The journey is updated',
-            icon: "success",
-          })
+          Helper.showSuccess('Great!', 'The journey is updated');
         },
-        error: err => { console.log("Api error", err)}
+        error: err => { Helper.showError(err)}
       })
     } else {
       this._journeyService.addOne(newJourney).subscribe({
         next: data => {
-          Swal.fire({
-            title: 'Great!',
-            text: 'The journey is created',
-            icon: "success",
-          })
+          Helper.showSuccess('Great!', 'The journey is created');
         },
-        error: err => { console.log("Api error", err)}
+        error: err => { Helper.showError(err);}
       })
     }
     

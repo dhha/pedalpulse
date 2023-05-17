@@ -21,4 +21,4 @@ const JourneySchema = mongoose.Schema({
     check_points: [CheckPointSchema]
 });
 
-mongoose.model("Journey", JourneySchema);
+mongoose.model(process.env.DB_JOURNEY_MODEL, JourneySchema, process.env.DB_JOURNEY_COLLECTION);

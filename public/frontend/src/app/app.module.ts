@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -14,8 +16,6 @@ import { LoginComponent } from './login/login.component';
 import { JourneysComponent } from './journeys/journeys.component';
 import { JourneyFormComponent } from './journey-form/journey-form.component';
 import { JourneyComponent } from './journey/journey.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http'
 
 @NgModule({
   declarations: [
@@ -29,7 +29,8 @@ import { HttpClientModule } from '@angular/common/http'
     LoginComponent,
     JourneysComponent,
     JourneyFormComponent,
-    JourneyComponent
+    JourneyComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,

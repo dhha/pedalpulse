@@ -4,6 +4,8 @@ import { ErrorPageComponent } from "./error-page/error-page.component";
 import { JourneysComponent } from "./journeys/journeys.component";
 import { JourneyFormComponent } from "./journey-form/journey-form.component";
 import { JourneyComponent } from "./journey/journey.component";
+import { LoginComponent } from "./login/login.component";
+import { RegisterComponent } from "./register/register.component";
 
 export const AppRoutes =  [
     {
@@ -25,6 +27,14 @@ export const AppRoutes =  [
     {
         path: "journey/:journeyId/edit",
         component: JourneyFormComponent
+    },
+    {
+        path: "register",
+        component: RegisterComponent
+    },
+    {
+        path: "login",
+        component: LoginComponent
     },
     {
         path: "**",
