@@ -5,6 +5,7 @@ import { UserModel } from '../user-model';
 import Helper from '../helper';
 
 class Profile{
+  first_name!: string;
   username: string;
   email: string;
   password!: string;
@@ -56,6 +57,7 @@ export class RegisterComponent {
 
   private _createUser() {
     const newUser = {
+      first_name: this.registerForm.value["first_name"],
       username: this.registerForm.value["username"],
       password: this.registerForm.value["password"],
       email: this.registerForm.value["email"]

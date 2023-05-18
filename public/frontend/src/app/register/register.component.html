@@ -13,10 +13,13 @@
                     <form class="contact-form" #registerForm="ngForm" (ngSubmit)="register()">
                         <div class="row mb-2">
                             <div class="col-sm-12">
-                                <input type="text" class="highlighted" name="username" placeholder="Username" required [(ngModel)]="user.username">
+                                <input type="text" class="highlighted" name="first_name" placeholder="Name" required [(ngModel)]="user.first_name">
                             </div>
                             <div class="col-sm-12 mt-1">
                                 <input type="text" class="highlighted" name="email" placeholder="Email" required [(ngModel)]="user.email">
+                            </div>
+                            <div class="col-sm-12 mt-1">
+                                <input type="text" class="highlighted" name="username" placeholder="Username" required [(ngModel)]="user.username">
                             </div>
                             <div class="col-sm-12 mt-1">
                                 <input type="password" class="highlighted" name="password"  placeholder="Password" [(ngModel)]="user.password">
@@ -24,7 +27,6 @@
                             <div class="col-sm-12 mt-1">
                                 <input type="password" class="highlighted" name="confirm_password" placeholder="ConfirmPassword" [(ngModel)]="user.confirm_password">
                             </div>
-                            
                             <div class="col-sm-12 mt-4">
                                 <button type="submit" class="btn btn-color uppercase os-font">Register</button>
                             </div>

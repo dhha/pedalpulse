@@ -5,28 +5,16 @@ const journeyModel = mongoose.model("Journey");
 const _updateOne = function(req, res, updateCallback) {
     const journeyId = req.params.id;
     if(journeyId && journeyId !="") {
-
-        journeyModel.findById(journeyId).exec().then(journey =>  {
-            if(!journey) {
-                helpers.sendResponse(res, {
-                    status: parseInt(process.env.STATUS_NOT_FOUND, 10),
-                    message: {message: process.env.MES_NOT_FOUND}
-                });
-            } else {
-                updateCallback(req, res, journey);
-            }
-        }).catch(err => {
-            helpers.sendResponse(res, {
-                status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
-                message: err
-            });
-        });
+        const response = {};
+        journeyModel.findById(journeyId).exec()
+            .then(journey => helpers.checkDataExists(journey, "Journey"))
+            .then(journey => updateCallback(req, res, journey))
+            .then(updatedJourney => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney))
+            .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
+            .finally(() => helpers.sendResponse(res, response));
     }
     else {
-        helpers.sendResponse(res, {
-            status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
-            message: {message: process.env.MSG_ID_NOT_NULL}
-        });
+        helpers.sendBadRequestResponse(res);
     }
 }
 
@@ -42,19 +30,13 @@ const journeyController = {
             limit = req.query.limit;
             const maxLimit = parseInt(process.env.MAX_LIMIT, 10);
             if(limit > maxLimit) {
-                helpers.sendResponse(res, {
-                    status: parseInt(process.env.STATUS_REQUEST_UNPROCESSABLE, 10),
-                    message: {message: process.env.MSG_YOUR_LIMIT_OVER + maxLimit}
-                });
+                helpers.sendBadRequestResponse(res, process.env.MSG_YOUR_LIMIT_OVER + maxLimit);
                 return;
             }
         }
 
         if(isNaN(offset) || isNaN(limit)) {
-            helpers.sendResponse(res, {
-                status: parseInt(process.env.STATUS_REQUEST_UNPROCESSABLE, 10),
-                message: {message: process.env.MSG_LIMIT_OFFSET_SHOULD_NUMBER}
-            });
+            helpers.sendBadRequestResponse(res, process.env.MSG_LIMIT_OFFSET_SHOULD_NUMBER);
             return;
         }
 
@@ -68,13 +50,10 @@ const journeyController = {
             lng = req.query.lng
         }
         if(isNaN(lng) || isNaN(lat)) {
-            helpers.sendResponse(res, {
-                status: parseInt(process.env.STATUS_REQUEST_UNPROCESSABLE, 10),
-                message: {message: process.env.MSG_LNG_LAT_SHOULD_NUMBER}
-            });
+            helpers.sendBadRequestResponse(res, process.env.MSG_LNG_LAT_SHOULD_NUMBER);
             return;
         }
-        
+
         let maxDistance = parseInt(process.env.MAX_DISTANCE, 10);
         let minDistance = parseInt(process.env.MIN_DISTANCE, 10);
         if(req.query && req.query.max_distance) {
@@ -84,10 +63,7 @@ const journeyController = {
             minDistance = req.query.min_distance
         }
         if(isNaN(maxDistance) || isNaN(minDistance)) {
-            helpers.sendResponse(res, {
-                status: parseInt(process.env.STATUS_REQUEST_UNPROCESSABLE, 10),
-                message: {message: process.env.MSG_DISTANCE_SHOULD_NUMBER}
-            });
+            helpers.sendBadRequestResponse(res, process.env.MSG_DISTANCE_SHOULD_NUMBER);
             return;
         }
 
@@ -105,42 +81,30 @@ const journeyController = {
         }
 
         const response = {};
-        journeyModel.find(queryString).skip(offset).limit(limit).exec().then(data => {
-            helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data);
-        }).catch(err => {
-            helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
-        }).finally(() => {
-            helpers.sendResponse(res, response);
-        });
+        journeyModel.find(queryString).skip(offset).limit(limit).sort({"start_date": -1}).exec()
+            .then(data => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data))
+            .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
+            .finally(() => helpers.sendResponse(res, response));
     },
     getOne: function(req, res) {
         const journeyId = req.params.id;
         if(journeyId && journeyId != "") {
             const response = {};
-            journeyModel.findById(journeyId).exec().then((data) => {
-                helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data);
-            }).catch(err => {
-                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
-            }).finally(() => {
-                helpers.sendResponse(res, response);
-            })
+            journeyModel.findById(journeyId).exec()
+                .then(journey => helpers.checkDataExists(journey, "Journey"))
+                .then((journey) => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, journey))
+                .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
+                .finally(() => helpers.sendResponse(res, response));
         } else {
-            helpers.sendResponse(res, {
-                status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
-                message: {message: process.env.MSG_ID_NOT_NULL}
-            });
+            helpers.sendBadRequestResponse(res);
         }
-        
     },
     addNew: function(req, res) {
         const response = {};
-        journeyModel.create(req.body).then(data => {
-            helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data);
-        }).catch(err => {
-            helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
-        }).finally(() => {
-            helpers.sendResponse(res, response);
-        });
+        journeyModel.create(req.body)
+            .then(data => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data))
+            .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
+            .finally(() => helpers.sendResponse(res, response));
     },
     fullUpdate: function(req, res) {
         const fullUpdate = function(req, res, journey) {
@@ -148,14 +112,7 @@ const journeyController = {
             journey.check_points = req.body.check_points;
             journey.start_date = req.body.start_date;
 
-            const response = {};
-            journey.save().then(updatedJourney => {
-                helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney);
-            }).catch(err => {
-                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
-            }).finally(() => {
-                helpers.sendResponse(res, response);
-            });
+            return journey.save();
         }
 
         _updateOne(req, res, fullUpdate);
@@ -166,14 +123,7 @@ const journeyController = {
             if(req.body.distance) journey.distance = req.body.distance;
             if(req.body.date) journey.date = req.body.date;
 
-            const response = {};
-            journey.save().then(updatedJourney => {
-                helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney);
-            }).catch(err => {
-                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
-            }).finally(() => {
-                helpers.sendResponse(res, response);
-            });
+            return journey.save();
         }
 
         _updateOne(req, res, _partialUpdate);
@@ -182,18 +132,13 @@ const journeyController = {
         const id = req.params.id;
         if(id && id != '') {
             const response = {};
-            journeyModel.findByIdAndDelete(id).exec().then(data => {
-                helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, data);
-            }).catch(err => {
-                helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
-            }).finally(() => {
-                helpers.sendResponse(res, response);
-            });
+            journeyModel.findByIdAndDelete(id).exec()
+                .then(journey => helpers.checkDataExists(journey, "Journey"))
+                .then(journey => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, journey))
+                .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
+                .finally(() => helpers.sendResponse(res, response));
         } else {
-            helpers.sendResponse(res, {
-                status: parseInt(process.env.STATUS_SERVER_ERROR, 10),
-                message: {message: process.env.MSG_ID_NOT_NULL}
-            });
+            helpers.sendBadRequestResponse(res);
         }
         
     }
