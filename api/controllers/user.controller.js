@@ -1,6 +1,9 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const helpers = require("../helpers");
+const util = require("util");
+const jwt = require("jsonwebtoken");
+
 const userModel = mongoose.model(process.env.DB_USER_MODEL);
 
 const _generateHash = function(password, salt) {
@@ -18,30 +21,30 @@ const _createUser = function(req, hash) {
     return userModel.create(newUser);
 }
 
-const _checkUserExists = function(user) {
+const _checkPassword = function(password, user) { 
     return new Promise((resolve, reject) => {
-        if(!user) {
-            reject({status: process.env.STATUS_NOT_FOUND, message: process.env.MSG_USER_NOT_FOUND});
-        } else {
-            resolve(user);
-        }
+        bcrypt.compare(password, user.password)
+            .then((isMatch) => {
+                resolve({user, isMatch});
+            }).catch((err) => reject(err));
     })
 }
 
-const _checkPassword = function(password, encryptedPassword) {
-    return bcrypt.compare(password, encryptedPassword);
-}
-
-const _handlePasswordMatch = function(isPasswordMatch) {
+const _handlePasswordMatch = function(user, isPasswordMatch) {
     return new Promise((resolve, reject) => {
-        if(isPasswordMatch) resolve();
+        if(isPasswordMatch) resolve(user);
         else reject({message: process.env.MSG_PASSWORD_INCORRECT});
     });
 }
 
+const _generateToken = function (user) {
+    const signIn = util.promisify(jwt.sign);
+    return signIn({name: user.first_name}, process.env.JWT_SECRET_KEY, {expiresIn: parseInt(process.env.TOKEN_EXPIRES_IN)});
+}
+
 const userController = {
     addOne: function(req, res) {
-        if(req.body && req.body.password) {
+        if(req.body && req.body.username && req.body.password) {
             const response = {};
             const saltRound = 10;
             bcrypt.genSalt(saltRound)
@@ -54,21 +57,22 @@ const userController = {
             helpers.sendBadRequestResponse(res, {message: process.env.MSG_PASSWORD_REQUIRED});
         }
     },
+
     loginByUserName: function(req, res) {
         const username = req.body.username;
         if(username) {
             const response = {};
             userModel.findOne({username: username})
-                .then(user => helpers.checkDataExists(user, "User"))
-                .then(user => _checkPassword(req.body.password, user.password))
-                .then(isPasswordMatch => _handlePasswordMatch(isPasswordMatch))
-                .then(() => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, {message: "Success"}))
+                .then(user => helpers.checkDataExists(user, process.env.MSG_OBJECT_USER_NAME))
+                .then(user => _checkPassword(req.body.password, user))
+                .then(({user, isMatch}) => _handlePasswordMatch(user, isMatch))
+                .then(user => _generateToken(user))
+                .then(token => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, {[process.env.TOKEN_RESPONSE_KEY]: token}))
                 .catch(error => helpers.setInternalResponse(response, process.env.STATUS_UNAUTHORIZED, error))
                 .finally(() => helpers.sendResponse(res, response));
         } else {
             helpers.sendBadRequestResponse(res, {message: process.env.MSG_USERNAME_REQUIRED});
         }
-        
     }
 }
 

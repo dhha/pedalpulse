@@ -5,13 +5,18 @@ using nodejs, angularjs, mongodb
 
 ## Installation
 
-* Run backend server
+* Restore database
+```
+mongorestore data\
+```
+
+* install backend server
 ```
 npm install
 npm start
 ```
 
-* Run frontend
+* install frontend
 ```
 cd ./public/frontend
 npm install

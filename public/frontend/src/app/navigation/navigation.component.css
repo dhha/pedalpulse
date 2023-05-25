@@ -1,0 +1,13 @@
+.main-menu-inner{
+    float: left;
+}
+.right-menu{
+    float: right;
+    font-size: 20px;
+    .welcome{
+        float: left;
+    }
+    .main-nav{
+        float: right;
+    }
+}

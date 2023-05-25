@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const helpers = require("../helpers");
-const journeyModel = mongoose.model("Journey");
+const journeyModel = mongoose.model(process.env.DB_JOURNEY_MODEL);
 
 const _updateOne = function(req, res, updateCallback) {
     const journeyId = req.params.id;
     if(journeyId && journeyId !="") {
         const response = {};
         journeyModel.findById(journeyId).exec()
-            .then(journey => helpers.checkDataExists(journey, "Journey"))
+            .then(journey => helpers.checkDataExists(journey, process.env.MSG_OBJECT_JOURNEY_NAME))
             .then(journey => updateCallback(req, res, journey))
             .then(updatedJourney => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney))
             .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
@@ -91,7 +91,7 @@ const journeyController = {
         if(journeyId && journeyId != "") {
             const response = {};
             journeyModel.findById(journeyId).exec()
-                .then(journey => helpers.checkDataExists(journey, "Journey"))
+                .then(journey => helpers.checkDataExists(journey, process.env.MSG_OBJECT_JOURNEY_NAME))
                 .then((journey) => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, journey))
                 .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
                 .finally(() => helpers.sendResponse(res, response));
@@ -133,7 +133,7 @@ const journeyController = {
         if(id && id != '') {
             const response = {};
             journeyModel.findByIdAndDelete(id).exec()
-                .then(journey => helpers.checkDataExists(journey, "Journey"))
+                .then(journey => helpers.checkDataExists(journey, process.env.MSG_OBJECT_JOURNEY_NAME))
                 .then(journey => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, journey))
                 .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
                 .finally(() => helpers.sendResponse(res, response));

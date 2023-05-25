@@ -1,0 +1,40 @@
+<div class="row mb-1">
+    <div class="col-sm-6">
+        <input type="text" [readonly]="!editMode" class="highlighted" name="author" placeholder="Name" [(ngModel)]="currentCheckPoint.name">
+    </div>
+    <div class="col-sm-2">
+        <input type="text" [readonly]="!editMode" class="highlighted" name="author" placeholder="Lng" [(ngModel)]="currentCheckPoint.location[0]">
+    </div>
+    <div class="col-sm-2">
+        <input type="text" [readonly]="!editMode" class="highlighted" name="author" placeholder="lat" [(ngModel)]="currentCheckPoint.location[1]">
+    </div>
+
+    <div *ngIf="!check_point._id; else editBlock">
+        <div class="col-sm-1">
+            <a class="btn btn-color uppercase os-font" (click)="create()">Create</a>
+        </div>
+        <div class="col-sm-1">
+            <a class="btn btn-color uppercase os-font" (click)="delete()">X</a>
+        </div>
+    </div>
+
+    <ng-template #editBlock>
+        <div *ngIf="!editMode; else saveBlock">
+            <div class="col-sm-1">
+                <a class="btn btn-color uppercase os-font" (click)="edit()">Edit</a>
+            </div>
+            <div class="col-sm-1">
+                <a class="btn btn-color uppercase os-font" (click)="delete()">X</a>
+            </div>
+        </div>
+        
+        <ng-template #saveBlock>
+            <div class="col-sm-1" >
+                <a class="btn btn-color uppercase os-font" (click)="update()">Save</a>
+            </div>
+            <div class="col-sm-1" >
+                <a class="btn btn-color uppercase os-font" (click)="cancel()">X</a>
+            </div>
+        </ng-template>
+    </ng-template>
+</div>

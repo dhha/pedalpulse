@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div data-wow-delay="0.3s" class="text-center mb-6 wow fadeInUp" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInUp;">
-                    <h2 class="fw-bold os-font color-2 fz-53 double_lined mb-1">{{currentJourney ? 'Update journey' : 'Create new journey'}}</h2>
+                    <h2 class="fw-bold os-font color-2 fz-53 double_lined mb-1">{{currentJourney._id ? 'Update journey' : 'Create new journey'}}</h2>
                     <p class="dark-color fz-19 mb-2">
                         <em>Your life is a journey, make it different</em>
                     </p>
@@ -16,7 +16,7 @@
                     <form class="contact-form" [formGroup]="journeyForm" (ngSubmit)="submitForm()">
                         <div class="row mb-2">
                             <div class="col-sm-12">
-                                <input type="text" class="highlighted" name="author" id="author" placeholder="Name (required)" formControlName="title" required>
+                                <input type="text" class="highlighted" name="author" placeholder="Name (required)" formControlName="title" required>
                             </div>
                             <div class="col-sm-12 mt-1">
                                 <input type="date" class="highlighted" name="email" id="email" placeholder="Start date" formControlName="start_date">
@@ -24,31 +24,52 @@
                             <div class="col-sm-12 mt-1">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <input type="text" class="highlighted" name="author" id="author" placeholder="Start point" formControlName="start_point">
+                                        <input type="text" class="highlighted" name="author" placeholder="Start point" formControlName="start_point">
                                     </div>
                                     <div class="col-sm-3">
-                                        <input type="text" class="highlighted" name="author" id="author" placeholder="Lng" formControlName="start_lng">
+                                        <input type="text" class="highlighted" name="author" placeholder="Lng" formControlName="start_lng">
                                     </div>
                                     <div class="col-sm-3">
-                                        <input type="text" class="highlighted" name="author" id="author" placeholder="lat" formControlName="start_lat">
+                                        <input type="text" class="highlighted" name="author" placeholder="lat" formControlName="start_lat">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-12 mt-1">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <input type="text" class="highlighted" name="author" id="author" placeholder="End point" formControlName="end_point">
+                                        <input type="text" class="highlighted" name="author" placeholder="End point" formControlName="end_point">
                                     </div>
                                     <div class="col-sm-3">
-                                        <input type="text" class="highlighted" name="author" id="author" placeholder="Lng" formControlName="end_lng">
+                                        <input type="text" class="highlighted" name="author" placeholder="Lng" formControlName="end_lng">
                                     </div>
                                     <div class="col-sm-3">
-                                        <input type="text" class="highlighted" name="author" id="author" placeholder="lat" formControlName="end_lat">
+                                        <input type="text" class="highlighted" name="author" placeholder="lat" formControlName="end_lat">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-12 mt-4">
-                                <button type="submit" class="btn btn-color uppercase os-font">{{currentJourney ? 'Update' : 'Create new'}}</button>
+                            <div class="col-md-12">
+                                <div class="mt-5 seperate-line"></div>
+                            </div>
+
+                            <div *ngIf="extraPoints"> 
+                                <div  *ngFor="let check of extraPoints" class="col-sm-12 mt-1">
+                                    <app-check-point 
+                                        [check_point]="check" 
+                                        [journeyId]="currentJourney._id" 
+                                        (onDelete)="deleteCheckPoint($event)"
+                                        (onCreate)="createCheckPoint($event)"
+                                        (onUpdate)="updateCheckPoint($event)"
+                                    ></app-check-point>
+                                </div>
+                            </div>
+
+                            
+                            <div class="col-sm-12 mt-1" *ngIf="currentJourney._id && isLogin">
+                                <a class="pull-right btn" (click)="addCheckPoint()">+ Add check points</a>
+                            </div>
+
+                            <div class="col-sm-12 mt-4" *ngIf="isLogin">
+                                <button type="submit" class="btn btn-color uppercase os-font">{{currentJourney._id ? 'Update' : 'Create new'}}</button>
                             </div>
                         </div>
                     </form>

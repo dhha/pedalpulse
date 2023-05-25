@@ -20,7 +20,7 @@ const helpers = {
         res.status(parseInt(process.env.STATUS_SUCCESS, 10)).json(message);
     },
 
-    checkDataExists: function(data, object="Data") {
+    checkDataExists: function(data, object= process.env.MSG_DEFAULT_DATA) {
         return new Promise((resolve, reject) => {
             if(data) {
                 resolve(data);
@@ -31,10 +31,7 @@ const helpers = {
     },
 
     sendBadRequestResponse: function(res, message = process.env.MSG_ID_NOT_NULL) {
-        sendResponse(res, {
-            status: parseInt(process.env.STATUS_BAD_REQUEST, 10),
-            message: {message: message}
-        });
+        res.status(parseInt(process.env.STATUS_BAD_REQUEST, 10)).json({message: message})
     }
 }
 

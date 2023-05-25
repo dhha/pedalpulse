@@ -1,10 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormGroup, NgForm } from '@angular/forms';
 import { UserDataService } from '../user-data.service';
 import { UserModel } from '../user-model';
 import Helper from '../helper';
+import { environment } from 'src/environments/environment';
 
-class Profile{
+export class Profile{
   first_name!: string;
   username: string;
   email: string;
@@ -16,6 +17,16 @@ class Profile{
     this.email = email
   }
 
+  fillFromForm(formdata: NgForm) {
+    this.first_name = formdata.value.first_name;
+    this.username = formdata.value.username;
+    this.email = formdata.value.email;
+    this.password = formdata.value.password;
+  }
+
+  toJson() {
+    return {"first_name": this.first_name, "email": this.email, "username": this.username, "password": this.password};
+  }
 }
 
 @Component({
@@ -42,32 +53,33 @@ export class RegisterComponent {
         if(this.registerForm.value["password"] == this.registerForm.value["confirm_password"]) {
           this._createUser();
         }else {
-          Helper.showWarning("Confirm password is not match");
+          Helper.showWarning(environment.msgRegisterConfirmPasswordNoMatch);
         }
 
       } else {
-        Helper.showWarning("Please enter password")
+        Helper.showWarning(environment.msgRegisterPleaseEnterPassword)
       }
       
     } else {
-      Helper.showWarning("Please enter username")
+      Helper.showWarning(environment.msgRegisterPleaseEnterUserName)
     }
     
   }
 
   private _createUser() {
-    const newUser = {
-      first_name: this.registerForm.value["first_name"],
-      username: this.registerForm.value["username"],
-      password: this.registerForm.value["password"],
-      email: this.registerForm.value["email"]
-    }
+    this.user.fillFromForm(this.registerForm);
   
-      this._userService.addOne(newUser).subscribe({
-        next: user => {
-          Helper.showSuccess("Success!", "Congratulation registation has been created successful")
-        },
-        error: err => Helper.showError(err)
-      })
+    this._userService.addOne(this.user).subscribe({
+      next: (user) => this.onSuccessRegister(user),
+      error: (err) => this.onFailureRegister(err)
+    });
+  }
+
+  private onSuccessRegister(user: UserModel) {
+    Helper.showSuccess(environment.msgRegisterSuccessTitle, environment.msgRegisterSuccess)
+  }
+
+  private onFailureRegister(error: any) {
+    Helper.showError(error);
   }
 }

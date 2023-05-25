@@ -1,9 +1,11 @@
 import { Component, Input } from '@angular/core';
-import Swal from 'sweetalert2'
-import { JourneyModel } from '../journey-model';
-import { JourneyDataService } from '../journey-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { Journey } from '../journey-model';
+import { JourneyDataService } from '../journey-data.service';
 import Helper from '../helper';
+import { environment } from 'src/environments/environment';
+import { AuthenticationService } from '../authentication.service';
 
 @Component({
   selector: 'app-journeys',
@@ -11,26 +13,28 @@ import Helper from '../helper';
   styleUrls: ['./journeys.component.css']
 })
 export class JourneysComponent {
-  journeys!: JourneyModel[];
+
+  get isLogin() { return this._authenticationService.isloggedIn };
+  journeys!: Journey[];
   offset: number = 0;
-  limit: number = 5;
+  limit: number = environment.defaultLimit;
   resultCount: number = 0;
   search: any = [];
 
   @Input()
   searchTermInput: string = "";
 
-  constructor(private _journeyService: JourneyDataService, private _router: Router) {}
+  constructor(private _journeyService: JourneyDataService, private _router: Router, private _authenticationService: AuthenticationService) {}
 
   ngOnInit() {
     this.loadData();
   }
 
   delete(jouneyId: string) {
-    Helper.showConfirm("Are you sure!", "Do you want to delete this journey", () => {
+    Helper.showConfirm(environment.msgAreYouSure, environment.msgAreYouSureDeleteJourney, () => {
       this._journeyService.deleteOne(jouneyId).subscribe({
         next: data => {
-          Helper.showSuccess('Great!', 'The journey is deleted');
+          Helper.showSuccess(environment.msgTitleSuccess, environment.msgAreDeleteJourneySuccess);
           this.loadData();
         },
         error: err => {

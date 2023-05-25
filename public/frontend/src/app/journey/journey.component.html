@@ -83,7 +83,7 @@
             </div>
         </div>
 
-        <div class="col-sm-12 mt-4">
+        <div class="col-sm-12 mt-4" *ngIf="isLogin">
             <button class="btn btn-color uppercase os-font" routerLink="/journey/{{journey._id}}/edit">Edit</button>
         </div>
     </div>

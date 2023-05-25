@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const helpers = require("../helpers");
-const journeyModel = mongoose.model("Journey");
+const journeyModel = mongoose.model(process.env.DB_JOURNEY_MODEL);
 
 
 const _createLocation = function(req, journey) {
@@ -12,7 +12,7 @@ const _updateLocation = function(req, journey) {
     const locationId = req.params.id;
     const location = journey.check_points.find(item => item._id == locationId);
     if(location) {
-        location.address = req.body.address;
+        location.name = req.body.name;
         location.lat = req.body.lat;
         location.lng = req.body.lng;
     }
@@ -21,21 +21,21 @@ const _updateLocation = function(req, journey) {
 }
 
 const _deleteLocation = function(req, journey) {
-    const location = journey.check_points.find(item => item._id == rreq.params.id);
+    const location = journey.check_points.find(item => item._id == req.params.id);
     const index = journey.check_points.indexOf(location);
     journey.check_points.splice(index, 1);
 
     return journey.save();
 }
 
-const locationController = {
+const checkpointController = {
     getAll: function(req, res) {
         const journeyId = req.params.journeyId;
 
         const response = {};
         if(journeyId && journeyId != "") {
-            journeyModel.findById(journeyId).select("check_points").exec()
-                .then(journey => helpers.checkDataExists(journey, "Journey"))
+            journeyModel.findById(journeyId).select(process.env.DB_CHECK_POINT_COLLECTION).exec()
+                .then(journey => helpers.checkDataExists(journey, process.env.MSG_OBJECT_JOURNEY_NAME))
                 .then(journey => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, journey.check_points))
                 .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
                 .finally(() => helpers.sendResponse(res, response))
@@ -50,8 +50,8 @@ const locationController = {
 
         if(journeyId && journeyId != "" && locationId && locationId != "") {
             const response = {};
-            journeyModel.findById(journeyId).select("check_points").exec()
-                .then(journey => helpers.checkDataExists(journey, "Journey"))
+            journeyModel.findById(journeyId).select(process.env.DB_CHECK_POINT_COLLECTION).exec()
+                .then(journey => helpers.checkDataExists(journey, process.env.MSG_OBJECT_JOURNEY_NAME))
                 .then(journey => {
                     const location = journey.check_points.find(item => item._id == locationId);
                     if(location) {
@@ -67,14 +67,14 @@ const locationController = {
         }
     },
     addNew: function(req, res) {
-        const journeyId = req.params.journeyId;
+        const journeyId = req.params.journeyId; console.log("journeyId", req.params);
 
         if(journeyId && journeyId != "") {
             const response = {};
             journeyModel.findById(journeyId).exec()
-                .then(journey => helpers.checkDataExists(journey, "Journey"))
+                .then(journey => helpers.checkDataExists(journey, process.env.MSG_OBJECT_JOURNEY_NAME))
                 .then(journey => _createLocation(req, journey))
-                .then(updatedJourney => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney.check_points))
+                .then(updatedJourney => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney.check_points.slice(-1)[0]))
                 .catch(err => {
                     helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err);
                 }).finally(() => {
@@ -91,9 +91,12 @@ const locationController = {
         if(journeyId && journeyId != "" && locationId && locationId != "") {
             const response = {};
             journeyModel.findById(journeyId).exec()
-                .then(journey => helpers.checkDataExists(journey, "Journey"))
+                .then(journey => helpers.checkDataExists(journey, process.env.MSG_OBJECT_JOURNEY_NAME))
                 .then(journey => _updateLocation(req, journey))
-                .then(updatedJourney => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney.check_points))
+                .then(updatedJourney => {
+                    const location = updatedJourney.check_points.find(item => item._id == locationId);
+                    helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, location);
+                })
                 .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
                 .finally(() => helpers.sendResponse(res, response));
         } else {
@@ -101,15 +104,15 @@ const locationController = {
         }
     },
     delete: function(req, res) {
-        const journeyId = req.params.journeyId;
-        const locationId = req.params.id;
+        const journeyId = req.params.journeyId; 
+        const checkPointId = req.params.id;
 
-        if(journeyId && journeyId != "" && locationId && locationId != "") {
+        if(journeyId && journeyId != "" && checkPointId && checkPointId != "") {
             const response = {};
             journeyModel.findById(journeyId).exec()
-                .then(journey => helpers.checkDataExists(journey, "Journey"))
+                .then(journey => helpers.checkDataExists(journey, process.env.MSG_OBJECT_JOURNEY_NAME))
                 .then(journey => _deleteLocation(req, journey))
-                .then(journey => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, updatedJourney.check_points))
+                .then(journey => helpers.setInternalResponse(response, process.env.STATUS_SUCCESS, journey.check_points))
                 .catch(err => helpers.setInternalResponse(response, process.env.STATUS_SERVER_ERROR, err))
                 .finally(() => helpers.sendResponse(res, response));
         } else {
@@ -118,4 +121,4 @@ const locationController = {
     }
 }
 
-module.exports = locationController;
+module.exports = checkpointController;

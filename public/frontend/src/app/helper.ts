@@ -12,7 +12,7 @@ export default class Helper{
     static showError(error: any) {
         Swal.fire({
             title: "Error",
-            text: error.error.message,
+            text: error.error? error.error.message : "Error",
             icon: "error",
           });
     };
@@ -38,7 +38,6 @@ export default class Helper{
             } else {
               console.log('cancel');
             }
-            
           });
     };
 }

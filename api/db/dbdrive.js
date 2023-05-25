@@ -5,7 +5,6 @@ mongoose.connection.on("connected", function(){
     console.log("Mongoose connected to", process.env.DB_NAME);
 });
 require("../models/jouney.model"); 
-require("../models/location.model"); 
 require("../models/user.model"); 
 
 mongoose.connection.on("disconected", function() {

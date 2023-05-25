@@ -1874,7 +1874,7 @@ ul.instagram .instagram-wrap .overlay {
     transition-property: height;
     transition-duration: .3s;
     height: 120px;
-    float: left;
+    /* float: left; */
 }
 
 .main-menu .main-nav,

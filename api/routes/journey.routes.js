@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const journeyController = require("../controllers/journey.controller");
-const locationController = require("../controllers/location.controller");
+const mildleware = require("./midleware");
 
 router.route("/")
     .get(journeyController.getAll)
@@ -10,17 +10,8 @@ router.route("/")
 router.route("/:id")
     .get(journeyController.getOne)
     .put(journeyController.fullUpdate)
-    .patch(journeyController.partialUpdate)
-    .delete(journeyController.delete);
-
-router.route("/:journeyId/locations")
-    .get(locationController.getAll)
-    .post(locationController.addNew);
-
-router.route("/:journeyId/locations/:id")
-    .get(locationController.getOne)
-    .put(locationController.update)
-    .delete(locationController.delete);
+    .patch(mildleware.Authentication, journeyController.partialUpdate)
+    .delete(mildleware.Authentication, journeyController.delete);
 
 
 module.exports = router;

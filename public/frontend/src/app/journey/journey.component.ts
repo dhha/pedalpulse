@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
-import { JourneyModel } from '../journey-model';
-import { JourneyDataService } from '../journey-data.service';
 import { ActivatedRoute } from '@angular/router';
+
+import { Journey } from '../journey-model';
+import { JourneyDataService } from '../journey-data.service';
 import Helper from '../helper';
+import { environment } from 'src/environments/environment';
+import { AuthenticationService } from '../authentication.service';
 
 @Component({
   selector: 'app-journey',
@@ -10,10 +13,12 @@ import Helper from '../helper';
   styleUrls: ['./journey.component.css']
 })
 export class JourneyComponent {
-  journey!: JourneyModel;
-  nearJourneys!: JourneyModel[];
 
-  constructor(private _journeyService: JourneyDataService, private _activeRouter: ActivatedRoute) {
+  get isLogin() { return this._authenticationService.isloggedIn };
+  journey!: Journey;
+  nearJourneys!: Journey[];
+
+  constructor(private _journeyService: JourneyDataService, private _activeRouter: ActivatedRoute, private _authenticationService: AuthenticationService) {
     
   }
 
@@ -41,7 +46,7 @@ export class JourneyComponent {
         lng: location[0],
         lat: location[1]
       };
-      this._journeyService.getAll(0, 10, search).subscribe({
+      this._journeyService.getAll(0, environment.defaultLimit, search).subscribe({
         next: data => {
           this.nearJourneys = data.filter(item => item._id != this.journey._id);
         },
