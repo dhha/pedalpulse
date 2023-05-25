@@ -7,19 +7,21 @@ using nodejs, angularjs, mongodb
 
 * Restore database
 ```
-mongorestore data\
+mongorestore --gzip data\
 ```
 
 * install backend server
 ```
 npm install
-npm start
 ```
 
 * install frontend
 ```
 cd ./public/frontend
 npm install
-npm start
 ```
 
+* run app
+```
+npm start
+```
